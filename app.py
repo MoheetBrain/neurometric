@@ -1,90 +1,81 @@
 import streamlit as st
-import json
-import time
-import random
+from dataclasses import dataclass
+from typing import Dict, Tuple
 
-# Page Configuration
+# ----------------------------
+# Config
+# ----------------------------
 st.set_page_config(
-    page_title="NeuroMetric Analyzer (Simulation Mode)",
+    page_title="NeuroMetric – Risk Calibration",
     page_icon="🧠",
     layout="wide"
 )
 
-# --- SIDEBAR ---
-with st.sidebar:
-    st.header("⚙️ System Status")
-    st.success("🟢 Simulation Mode Active")
-    st.info("No API Key required. Running localized stochastic modeling.")
-    
-    st.divider()
-    st.markdown("""
-    ### 🔬 Scientific Framework
-    * **RPE:** Reward Prediction Error
-    * **Entropy:** Uncertainty/Anxiety
-    * **Counterfactual:** Regret
-    """)
+# ----------------------------
+# Core model (deterministic)
+# ----------------------------
+EPSILON = 0.05  # prevents denominator collapse 🧱
 
-# --- MAIN APP ---
-st.title("🧠 NeuroMetric: Computational Affective Modeling")
-st.caption("Mode: SIMULATION (Stochastic Generation)")
+@dataclass
+class CalibrationInput:
+    L_low: float
+    L_mid: float
+    L_high: float
+    S: float
+    coping: float
+    rescue: float
+    reversibility: float   # 0 = feels permanent, 1 = clearly reversible
+    control: float         # 0 = no agency, 1 = high agency
 
-# --- USER INPUT ---
-user_entry = st.text_area(
-    "Input Raw Data (Journal Entry):", 
-    height=150, 
-    placeholder="e.g. Went to the Buddhist Centre. Saw a girl. Froze. Felt ashamed."
-)
+def clamp01(x: float) -> float:
+    return max(0.0, min(1.0, x))
 
-if st.button("Run Computation"):
-    if not user_entry:
-        st.warning("Please enter text to analyze.")
-    else:
-        # SIMULATING THE AI THINKING
-        with st.spinner("Running Inference Model..."):
-            time.sleep(2) # Fake processing time to feel real
-            
-            # GENERATING DUMMY DATA (STOCHASTIC)
-            # This simulates what the AI would output based on your mood
-            data = {
-                "Reward_Prediction_Error": round(random.uniform(-5.0, 5.0), 1),
-                "Uncertainty_Coefficient": round(random.uniform(0.1, 0.9), 2),
-                "Counterfactual_Loss": round(random.uniform(1.0, 9.0), 1),
-                "Cognitive_Dissonance": round(random.uniform(2.0, 8.0), 1),
-                "Recommended_Algorithm": random.choice([
-                    "DialoguePod Activation", 
-                    "Machine Gun Protocol", 
-                    "The Metaview", 
-                    "Cognitive Reframing"
-                ])
-            }
-            
-            # --- VISUALIZATION ---
-            st.success("Analysis Complete.")
-            
-            # Metrics Row
-            col1, col2, col3, col4 = st.columns(4)
-            
-            with col1:
-                st.metric("RPE (Dopamine)", f"{data['Reward_Prediction_Error']}", delta="Prediction Error")
-            
-            with col2:
-                st.metric("Entropy (Anxiety)", f"{data['Uncertainty_Coefficient']}/1.0", delta_color="inverse")
-                
-            with col3:
-                st.metric("Counterfactual Loss", f"{data['Counterfactual_Loss']}/10", delta_color="inverse")
-                
-            with col4:
-                st.metric("Dissonance", f"{data['Cognitive_Dissonance']}/10", delta_color="inverse")
-            
-            st.divider()
-            
-            # Strategic Output
-            st.subheader("🤖 Recommended Protocol")
-            st.info(f"**Strategy: {data['Recommended_Algorithm']}**")
-            
-            with st.expander("View Raw JSON Output"):
-                st.json(data)
+def expected_harm(L: float, S: float) -> float:
+    return clamp01(L) * clamp01(S)
 
-# Footer
-st.markdown("---")
-st.caption("NeuroMetric v1.0 | Built with Python & Streamlit")
+def buffer_score(coping: float, rescue: float, reversibility: float, control: float) -> float:
+    # Weighted sum keeps it interpretable and bounded ✅
+    # You can tune these weights later.
+    b = (0.35 * coping) + (0.35 * rescue) + (0.15 * reversibility) + (0.15 * control)
+    return clamp01(b)
+
+def pressure_score(L: float, S: float, buffers: float) -> float:
+    # "Pressure" can be >1; that's fine, but bounded inputs + epsilon keep it stable
+    return (clamp01(L) * clamp01(S)) / (EPSILON + buffers)
+
+def band_label(x: float) -> str:
+    # Simple banding for interpretation (tune later)
+    if x < 0.25:
+        return "🟢 Low"
+    if x < 0.60:
+        return "🟡 Medium"
+    if x < 1.10:
+        return "🟠 High"
+    return "🔴 Extreme"
+
+def dominant_driver(ci: CalibrationInput) -> str:
+    # Identify what’s *mathematically* driving the score (simple + explainable)
+    buffers = buffer_score(ci.coping, ci.rescue, ci.reversibility, ci.control)
+
+    # Compare components
+    L_span = abs(ci.L_high - ci.L_low)
+    low_buffers = 1.0 - buffers
+
+    # Heuristic logic (transparent + stable)
+    if ci.S >= 0.80 and ci.L_mid <= 0.20:
+        return "💥 Severity is high while likelihood is low → classic 'rare catastrophe' fear."
+    if low_buffers >= 0.55:
+        return "🧱 Buffers feel weak (coping/rescue/control/reversibility) → helplessness amplification."
+    if L_span >= 0.35:
+        return "🎲 Uncertainty is large (wide probability range) → ambiguity-driven anxiety."
+    if ci.control <= 0.25:
+        return "🕹️ Low perceived control → nervous system stays on high alert."
+    return "✅ No single driver dominates → mixed factors."
+
+# ----------------------------
+# Scenario classification (rule-based v1)
+# ----------------------------
+SCENARIOS = {
+    "Legal / Court ⚖️": ["court", "trial", "solicitor", "judge", "case", "conviction", "sentence", "prison", "charge"],
+    "Health 🧬": ["symptom", "cancer", "doctor", "hospital", "disease", "pain", "scan"]
+}
