@@ -1,0 +1,6 @@
+pyproject.toml
+neurometric.egg-info/PKG-INFO
+neurometric.egg-info/SOURCES.txt
+neurometric.egg-info/dependency_links.txt
+neurometric.egg-info/requires.txt
+neurometric.egg-info/top_level.txt

@@ -1,0 +1,63 @@
+# 50 Emotions Configuration
+
+# --- PANAS Positive (10) ---
+- {name: interested,     bias: 0.2, weights: {loss_future: 0.3, uncertainty: 0.2}}
+- {name: excited,        bias: 0.1, weights: {loss_future: 0.3, uncertainty: 0.2, pressure: -0.2}}
+- {name: strong,         bias: 0.1, weights: {low_control: -0.8, low_buffers: -0.5}}
+- {name: enthusiastic,   bias: 0.1, weights: {loss_future: 0.3, low_buffers: -0.3}}
+- {name: proud,          bias: 0.0, weights: {low_control: -0.8, responsibility: 0.2}}
+- {name: alert,          bias: 0.0, weights: {pressure: 0.6, uncertainty: 0.2}}
+- {name: inspired,       bias: 0.0, weights: {loss_future: 0.4, low_buffers: -0.2}}
+- {name: determined,     bias: 0.0, weights: {low_control: -0.7, goal_blocked: 0.3}}
+- {name: attentive,      bias: 0.0, weights: {pressure: 0.2, uncertainty: 0.2}}
+- {name: active,         bias: 0.0, weights: {low_buffers: -0.4, low_control: -0.3}}
+
+# --- PANAS Negative (10) ---
+- {name: distressed,     bias: 0.0, weights: {pressure: 1.2, low_buffers: 0.6}}
+- {name: upset,          bias: 0.0, weights: {pressure: 0.9, loss_past: 0.3}}
+- {name: guilty,         bias: 0.0, weights: {responsibility: 1.2, loss_past: 0.4, social_eval: 0.4}}
+- {name: scared,         bias: 0.0, weights: {threat: 0.8, pressure: 0.6, low_control: 0.4}}
+- {name: hostile,        bias: -0.2, weights: {goal_blocked: 0.8, low_control: -0.2}}
+- {name: irritable,      bias: -0.1, weights: {pressure: 0.6, low_buffers: 0.4, goal_blocked: 0.3}}
+- {name: ashamed,        bias: -0.1, weights: {social_eval: 1.1, responsibility: 0.5, loss_past: 0.3}}
+- {name: nervous,        bias: 0.0, weights: {uncertainty: 0.8, pressure: 0.6}}
+- {name: jittery,        bias: 0.0, weights: {uncertainty: 0.7, pressure: 0.6}}
+- {name: afraid,         bias: 0.0, weights: {threat: 0.9, low_control: 0.5, low_buffers: 0.4}}
+
+# --- Anxiety Family ---
+- {name: anxiety,        bias: 0.0, weights: {pressure: 1.4, uncertainty: 0.6, low_control: 0.5}}
+- {name: worry,          bias: 0.0, weights: {uncertainty: 1.0, threat: 0.5, loss_future: 0.4}}
+- {name: stress,         bias: 0.0, weights: {pressure: 1.2, goal_blocked: 0.4}}
+- {name: panic,          bias: -0.3, weights: {pressure: 1.8, low_control: 0.8}}
+- {name: dread,          bias: -0.2, weights: {threat: 1.0, loss_future: 0.6, low_reversibility: 0.6}}
+
+# --- Sadness/Despair Family ---
+- {name: sadness,        bias: -0.1, weights: {loss_past: 0.9, low_reversibility: 0.5}}
+- {name: grief,          bias: -0.3, weights: {loss_past: 1.2, low_reversibility: 0.8}}
+- {name: loneliness,     bias: -0.2, weights: {loss_past: 0.4, low_buffers: 0.4}}
+- {name: disappointment, bias: -0.1, weights: {loss_past: 0.7, responsibility: 0.3}}
+- {name: hopelessness,   bias: -0.4, weights: {low_control: 1.0, low_reversibility: 1.0, pressure: 0.6}}
+- {name: regret,         bias: -0.1, weights: {responsibility: 0.9, loss_past: 0.7, low_reversibility: 0.5}}
+- {name: embarrassment,  bias: -0.2, weights: {social_eval: 1.0, responsibility: 0.2}}
+- {name: envy,           bias: -0.3, weights: {loss_past: 0.3, social_eval: 0.4}}
+- {name: jealousy,       bias: -0.3, weights: {loss_past: 0.4, social_eval: 0.6}}
+- {name: boredom,        bias: -0.2, weights: {pressure: -0.4, uncertainty: -0.3}}
+
+# --- Anger Family ---
+- {name: annoyance,      bias: -0.2, weights: {goal_blocked: 0.7, pressure: 0.3}}
+- {name: frustration,    bias: -0.1, weights: {goal_blocked: 1.0, pressure: 0.4}}
+- {name: anger,          bias: -0.2, weights: {goal_blocked: 0.9, responsibility: -0.2}}
+- {name: rage,           bias: -0.6, weights: {goal_blocked: 1.4, pressure: 0.6}}
+- {name: resentment,     bias: -0.4, weights: {goal_blocked: 0.6, loss_past: 0.5}}
+- {name: contempt,       bias: -0.5, weights: {goal_blocked: 0.4, social_eval: 0.3}}
+- {name: disgust,        bias: -0.5, weights: {loss_past: 0.3, social_eval: 0.2}}
+- {name: apathy,         bias: -0.2, weights: {pressure: -0.3, low_control: 0.3}}
+
+# --- Positive/Neutral Extras ---
+- {name: calm,           bias: 0.2, weights: {pressure: -1.1, uncertainty: -0.4}}
+- {name: contentment,    bias: 0.2, weights: {pressure: -0.8, loss_past: -0.2}}
+- {name: relief,         bias: 0.1, weights: {pressure: -0.9, low_buffers: -0.2}}
+- {name: gratitude,      bias: 0.1, weights: {low_buffers: -0.4, loss_past: -0.1}}
+- {name: confidence,     bias: 0.1, weights: {low_control: -1.0, low_buffers: -0.4}}
+- {name: hope,           bias: 0.1, weights: {loss_future: 0.8, pressure: -0.2}}
+- {name: love,           bias: 0.0, weights: {low_buffers: -0.3, pressure: -0.2}}
